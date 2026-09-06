@@ -80,7 +80,7 @@ export function toRestaurant(row: Record<string, unknown>): Restaurant {
     cuisine: (row.cuisine as string | null) ?? null,
     address: (row.address as string | null) ?? null,
     rating: num(row.rating),
-    createdAt: isoTimestamp(row.createdAt),
+    createdAt: isoTimestamp(row.created_at),
   };
 }
 
@@ -92,6 +92,6 @@ export function toVisit(row: Record<string, unknown>): Visit {
     date: dateOnly(row.date),
     amountSpent: num(row.amountSpent),
     notes: (row.notes as string | null) ?? null,
-    createdAt: isoTimestamp(row.createdAt),
+    createdAt: isoTimestamp(row.created_at),
   };
 }
