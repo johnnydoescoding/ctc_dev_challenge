@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { pool } from '@/db/pool';
 import { handleError } from '@/lib/errors';
 import { toRestaurant } from '@/lib/types';
+import { validateRestrauntBody, validateNoDuplicate,  } from '@/lib/validation';
 
 /**
  * GET /api/restaurants
@@ -9,6 +10,7 @@ import { toRestaurant } from '@/lib/types';
  */
 export async function GET() {
   try {
+
     const { rows } = await pool.query(
       'SELECT * FROM restaurants ORDER BY created_at DESC'
     );
@@ -32,8 +34,13 @@ export async function GET() {
  * bad bodies with a 400 rather than letting them reach the database.
  */
 export async function POST(_req: Request) {
-  try { 
-    const { name, cuisine, address, rating } = await _req.json();
+  try {
+    
+    const body = await _req.json();
+    validateRestrauntBody(body);
+    const {name, cuisine, address, rating} = body;
+    await validateNoDuplicate(name, address);
+
     const { rows } = await pool.query(
       `INSERT INTO restaurants(name, cuisine, address, rating)
       VALUES ($1, $2, $3, $4)

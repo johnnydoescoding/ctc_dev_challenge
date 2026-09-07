@@ -21,7 +21,53 @@ import { NextResponse } from 'next/server';
  * TODO (A3): avoid leaking internal error details in responses
  */
 export function handleError(err: unknown): NextResponse {
-  console.error('Unhandled API error:', err);
+  if(err instanceof KnownError){
+    return NextResponse.json({ error: err.message }, { status: err.status });
+  }
 
+  if (err instanceof SyntaxError) {
+    return NextResponse.json({ error: 'Request body must contain valid JSON' }, { status: 400 });
+  }
+
+  console.error('Unhandled API error:', err);
   return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
 }
+
+export class KnownError extends Error { 
+  status: number
+  constructor(status: number, message: string) { 
+    super(message); 
+    this.name = "KnownError"
+    this.status = status;
+  }
+
+}
+
+export class DataValidationError extends KnownError { 
+  constructor(message: string){
+    super(400, message); 
+  }
+}
+
+export class DuplicateRestrauntError extends KnownError{
+  constructor(message: string){
+    super(409, message);
+  }
+}
+
+
+export class NotFoundError extends KnownError { 
+  constructor(message: string){
+    super(404, message);
+  }
+}
+
+
+//Known errors
+//404 missing row
+//404 id isn't a positive integer
+//400 invalid body
+//400 bad input (ex. rating btwn 1-5)
+//409 duplicates
+//400 malformed json
+
