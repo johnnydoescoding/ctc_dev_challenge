@@ -34,6 +34,30 @@ export function validateRestrauntBody(body: unknown): void {
   ) {
     throw new DataValidationError('Rating must be a number between 0 and 5');
   }
+
+  const latitude = 'latitude' in body ? body.latitude ?? null : null;
+  const longitude = 'longitude' in body ? body.longitude ?? null : null;
+
+  // Missing/null coordinates mean this restaurant has no map location yet.
+  if (latitude === null && longitude === null) return;
+
+  if (latitude === null || longitude === null) {
+    throw new DataValidationError('Latitude and longitude must be provided together');
+  }
+
+  if (
+    typeof latitude !== 'number' || !Number.isFinite(latitude) ||
+    latitude < -90 || latitude > 90
+  ) {
+    throw new DataValidationError('Latitude must be a finite number between -90 and 90');
+  }
+
+  if (
+    typeof longitude !== 'number' || !Number.isFinite(longitude) ||
+    longitude < -180 || longitude > 180
+  ) {
+    throw new DataValidationError('Longitude must be a finite number between -180 and 180');
+  }
 }
 
 

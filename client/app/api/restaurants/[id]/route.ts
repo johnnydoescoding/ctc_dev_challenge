@@ -35,16 +35,16 @@ export async function PUT(_req: Request, { params }: Params) {
   try {
     const body = await _req.json();
     validateRestrauntBody(body);
-    const { name, cuisine, address, rating } = body;
+    const { name, cuisine, address, rating, latitude = null, longitude = null } = body;
     const id = validateId(params.id);
     await validateNoDuplicate(name, address, id);
 
     const { rows } = await pool.query(
       `UPDATE restaurants
-      SET name=$1, cuisine=$2, address=$3, rating=$4
-      WHERE id=$5
+      SET name=$1, cuisine=$2, address=$3, rating=$4, latitude=$5, longitude=$6
+      WHERE id=$7
       RETURNING *`,
-      [name, cuisine, address, rating, id]
+      [name, cuisine, address, rating, latitude, longitude, id]
     );
     validateExistence(rows.length);
     return NextResponse.json(toRestaurant(rows[0]), { status: 200 });

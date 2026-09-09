@@ -86,6 +86,14 @@ printf '%s  the first install usually takes 1-2 minutes...%s\n' "$DIM" "$RESET"
 (cd client && npm install --no-fund --no-audit)
 ok "dependencies installed"
 
+step "Setting up local configuration"
+if [ ! -e client/.env.local ]; then
+  cp client/.env.example client/.env.local
+  ok "created client/.env.local from client/.env.example"
+else
+  ok "keeping existing client/.env.local"
+fi
+
 # --- 4. schema + sample data -------------------------------------------------
 
 step "Creating tables (npm run migrate)"

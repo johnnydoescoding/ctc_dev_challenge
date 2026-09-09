@@ -8,12 +8,51 @@ import { pool } from './pool';
  * Clears existing rows first so re-seeding gives you a clean, predictable set.
  */
 
+// Real USC-area addresses; ratings below are fictional sample ratings.
+// Coordinates come from MapTiler street-address matches, not suite entrances.
+// Gogobop and sweetgreen share a building, so their coordinates are identical.
 const restaurants = [
-  { name: 'The Rusty Spoon', cuisine: 'American', address: '12 Main St', rating: 4.5 },
-  { name: 'Sakura House', cuisine: 'Japanese', address: '88 Cherry Ln', rating: 4.8 },
-  { name: 'Bella Napoli', cuisine: 'Italian', address: '301 Olive Ave', rating: 4.2 },
-  { name: 'El Fuego', cuisine: 'Mexican', address: '47 Sol Blvd', rating: 4.6 },
-  { name: 'Green Bowl', cuisine: 'Vegetarian', address: '5 Garden Way', rating: 3.9 },
+  {
+    name: 'CAVA',
+    cuisine: 'Mediterranean',
+    address: '3201 S Hoover St, Suite 1840, Los Angeles, CA 90089',
+    rating: 4.5,
+    latitude: 34.025019,
+    longitude: -118.284484,
+  },
+  {
+    name: 'Gogobop',
+    cuisine: 'Korean',
+    address: '929 W Jefferson Blvd, Suite 1610, Los Angeles, CA 90089',
+    rating: 4.8,
+    latitude: 34.024925,
+    longitude: -118.285134,
+  },
+  {
+    name: 'sweetgreen',
+    cuisine: 'Salads',
+    address: '929 W Jefferson Blvd, Suite 1650, Los Angeles, CA 90089',
+    rating: 4.2,
+    latitude: 34.024925,
+    longitude: -118.285134,
+  },
+  {
+    name: 'Dulce',
+    cuisine: 'Cafe and Bakery',
+    address: '3096 McClintock Ave, Suite 1420, Los Angeles, CA 90007',
+    rating: 4.6,
+    latitude: 34.025634,
+    longitude: -118.285216,
+  },
+  {
+    // Near USC on Figueroa, rather than inside USC Village.
+    name: "Jersey Mike's",
+    cuisine: 'Sandwiches',
+    address: '3584 S Figueroa St, Suite 2, Los Angeles, CA 90007',
+    rating: 3.9,
+    latitude: 34.018577,
+    longitude: -118.281862,
+  },
 ];
 
 const visits = [
@@ -33,10 +72,10 @@ async function seed(): Promise<void> {
     const restaurantIds: number[] = [];
     for (const r of restaurants) {
       const { rows } = await client.query(
-        `INSERT INTO restaurants (name, cuisine, address, rating)
-         VALUES ($1, $2, $3, $4)
+        `INSERT INTO restaurants (name, cuisine, address, rating, latitude, longitude)
+         VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING id`,
-        [r.name, r.cuisine, r.address, r.rating]
+        [r.name, r.cuisine, r.address, r.rating, r.latitude, r.longitude]
       );
       restaurantIds.push(rows[0].id);
     }

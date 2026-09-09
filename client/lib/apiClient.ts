@@ -8,7 +8,7 @@
  * The shapes these helpers return live in `lib/types.ts`, shared with the
  * handlers that produce them.
  */
-import type { Restaurant } from './types';
+import type { Restaurant, Visit, VisitWithRestaurant } from './types';
 
 // We read a base URL from the environment because Server Components fetch on
 // the server, where relative URLs don't resolve - so we need an absolute origin.
@@ -34,4 +34,53 @@ export async function getRestaurants(): Promise<Restaurant[]> {
 export async function getRestaurant(id: number | string): Promise<Restaurant> {
   const res = await fetch(`${API_URL}/api/restaurants/${id}`, { cache: 'no-store' });
   return res.json();
+}
+
+async function readResponse(response: Response) {
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || 'The API request failed. Please try again.');
+  }
+  return data;
+}
+
+
+/** Fetch visits with their associated restaurant information. */
+export async function getVisits(): Promise<VisitWithRestaurant[]> {
+  const res = await fetch(`${API_URL}/api/visits`, { cache: 'no-store' });
+  const data = await readResponse(res);
+  if (!Array.isArray(data)) throw new Error('Unexpected visit response from the API.');
+  return data;
+}
+
+/** Create a restaurant, optionally with a map location. */
+export async function addRestaurant(body: {
+  name: string;
+  cuisine: string;
+  address: string;
+  rating: number;
+  latitude?: number | null;
+  longitude?: number | null;
+}): Promise<Restaurant> {
+  const res = await fetch(`${API_URL}/api/restaurants`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  return readResponse(res);
+}
+
+/** Record a visit to an existing restaurant. */
+export async function addVisit(body: {
+  restaurantId: number;
+  date: string;
+  amountSpent: number;
+  notes: string | null;
+}): Promise<Visit> {
+  const res = await fetch(`${API_URL}/api/visits`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  return readResponse(res);
 }

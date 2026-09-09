@@ -38,14 +38,14 @@ export async function POST(_req: Request) {
     
     const body = await _req.json();
     validateRestrauntBody(body);
-    const {name, cuisine, address, rating} = body;
+    const { name, cuisine, address, rating, latitude = null, longitude = null } = body;
     await validateNoDuplicate(name, address);
 
     const { rows } = await pool.query(
-      `INSERT INTO restaurants(name, cuisine, address, rating)
-      VALUES ($1, $2, $3, $4)
+      `INSERT INTO restaurants(name, cuisine, address, rating, latitude, longitude)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *`,
-      [name, cuisine, address, rating]
+      [name, cuisine, address, rating, latitude, longitude]
     );
     return NextResponse.json(toRestaurant(rows[0]), {status: 201});
 

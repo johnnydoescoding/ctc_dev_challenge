@@ -1,0 +1,228 @@
+{
+  "info": {
+    "name": "Feeding Brennen",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Send requests manually in the listed order. Replace example restaurant ID 6 in URLs and visit bodies with the ID returned by Create restaurant. Test duplicates before deleting the restaurant; the final three requests use its deleted ID. Status codes in names are expected results."
+  },
+  "item": [
+    {
+      "name": "Create restaurant (201)",
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/restaurants",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test Restaurant\",\n  \"cuisine\": \"American\",\n  \"address\": \"123 Test Street, Los Angeles, CA\",\n  \"rating\": 4.5,\n  \"latitude\": 34.025,\n  \"longitude\": -118.285\n}"
+        }
+      }
+    },
+    {
+      "name": "Get all restaurants (200)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:3000/api/restaurants"
+      }
+    },
+    {
+      "name": "Get restaurant (200)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:3000/api/restaurants/6"
+      }
+    },
+    {
+      "name": "Update restaurant (200)",
+      "request": {
+        "method": "PUT",
+        "url": "http://localhost:3000/api/restaurants/6",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test Restaurant\",\n  \"cuisine\": \"American\",\n  \"address\": \"123 Test Street, Los Angeles, CA\",\n  \"rating\": 5,\n  \"latitude\": 34.025,\n  \"longitude\": -118.285\n}"
+        }
+      }
+    },
+    {
+      "name": "Add visit (201)",
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/visits",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"restaurantId\": 6,\n  \"date\": \"2026-09-09\",\n  \"amountSpent\": 18.5,\n  \"notes\": \"Lunch\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Get all visits (200)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:3000/api/visits"
+      }
+    },
+    {
+      "name": "Create restaurant without name (400)",
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/restaurants",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cuisine\": \"American\",\n  \"address\": \"123 Test Street, Los Angeles, CA\",\n  \"rating\": 4.5,\n  \"latitude\": 34.025,\n  \"longitude\": -118.285\n}"
+        }
+      }
+    },
+    {
+      "name": "Create restaurant with rating 6 (400)",
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/restaurants",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test Restaurant\",\n  \"cuisine\": \"American\",\n  \"address\": \"123 Test Street, Los Angeles, CA\",\n  \"rating\": 6,\n  \"latitude\": 34.025,\n  \"longitude\": -118.285\n}"
+        }
+      }
+    },
+    {
+      "name": "Create duplicate restaurant (409)",
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/restaurants",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test Restaurant\",\n  \"cuisine\": \"American\",\n  \"address\": \"123 Test Street, Los Angeles, CA\",\n  \"rating\": 4.5,\n  \"latitude\": 34.025,\n  \"longitude\": -118.285\n}"
+        }
+      }
+    },
+    {
+      "name": "Get restaurant with invalid ID (404)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:3000/api/restaurants/abc"
+      }
+    },
+    {
+      "name": "Update restaurant with rating -1 (400)",
+      "request": {
+        "method": "PUT",
+        "url": "http://localhost:3000/api/restaurants/6",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test Restaurant\",\n  \"cuisine\": \"American\",\n  \"address\": \"123 Test Street, Los Angeles, CA\",\n  \"rating\": -1,\n  \"latitude\": 34.025,\n  \"longitude\": -118.285\n}"
+        }
+      }
+    },
+    {
+      "name": "Add visit with negative amount (400)",
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/visits",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"restaurantId\": 6,\n  \"date\": \"2026-09-09\",\n  \"amountSpent\": -10,\n  \"notes\": \"Lunch\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Add visit with impossible date (400)",
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/visits",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"restaurantId\": 6,\n  \"date\": \"2026-02-30\",\n  \"amountSpent\": 18.5,\n  \"notes\": \"Lunch\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Delete restaurant (204)",
+      "request": {
+        "method": "DELETE",
+        "url": "http://localhost:3000/api/restaurants/6"
+      }
+    },
+    {
+      "name": "Get deleted restaurant (404)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:3000/api/restaurants/6"
+      }
+    },
+    {
+      "name": "Delete restaurant again (404)",
+      "request": {
+        "method": "DELETE",
+        "url": "http://localhost:3000/api/restaurants/6"
+      }
+    },
+    {
+      "name": "Add visit for deleted restaurant (404)",
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/visits",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"restaurantId\": 6,\n  \"date\": \"2026-09-09\",\n  \"amountSpent\": 18.5,\n  \"notes\": \"Lunch\"\n}"
+        }
+      }
+    }
+  ]
+}

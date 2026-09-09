@@ -28,10 +28,13 @@
 export interface Restaurant {
   id: number;
   name: string;
-  cuisine: string | null;
-  address: string | null;
+  cuisine: string;
+  address: string;
   /** 0-5. A real number in JSON, not a string. */
-  rating: number | null;
+  rating: number;
+  /** Both null when no location is saved. */
+  latitude: number | null;
+  longitude: number | null;
   /** ISO 8601 timestamp, e.g. "2026-01-01T00:00:00.000Z" */
   createdAt: string;
 }
@@ -41,10 +44,14 @@ export interface Visit {
   restaurantId: number;
   /** Calendar date, "YYYY-MM-DD". No time, no timezone. */
   date: string;
-  amountSpent: number | null;
+  amountSpent: number;
   notes: string | null;
   /** ISO 8601 timestamp. */
   createdAt: string;
+}
+
+export interface VisitWithRestaurant extends Visit {
+  restaurant: Restaurant;
 }
 
 // --- row mappers -------------------------------------------------------------
@@ -77,10 +84,12 @@ export function toRestaurant(row: Record<string, unknown>): Restaurant {
   return {
     id: Number(row.id),
     name: String(row.name),
-    cuisine: (row.cuisine as string | null) ?? null,
-    address: (row.address as string | null) ?? null,
-    rating: num(row.rating),
+    cuisine: String(row.cuisine),
+    address: String(row.address),
+    rating: Number(row.rating),
     createdAt: isoTimestamp(row.created_at),
+    latitude: num(row.latitude),
+    longitude: num(row.longitude),
   };
 }
 
@@ -90,7 +99,7 @@ export function toVisit(row: Record<string, unknown>): Visit {
     id: Number(row.id),
     restaurantId: Number(row.restaurantId),
     date: dateOnly(row.date),
-    amountSpent: num(row.amountSpent),
+    amountSpent: Number(row.amountSpent),
     notes: (row.notes as string | null) ?? null,
     createdAt: isoTimestamp(row.created_at),
   };
